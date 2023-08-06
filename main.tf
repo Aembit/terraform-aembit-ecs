@@ -2,37 +2,59 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+resource "aws_service_discovery_service" "agent-controller" {
+  name = "agent-controller"
+  description = "Private DNS Record for Aembit AgentController connectivity"
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.agent-controller.id
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE"
+  }
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_private_dns_namespace" "agent-controller" {
+  name        = var.ecs_private_dns_domain
+  description = "Private DNS Namespace for Aembit AgentController connectivity"
+  vpc         = var.ecs_vpc_id
+}
+
 ##########################################################################################
 # AgentController Task & Service
 resource "aws_ecs_task_definition" "agent-controller" {
-  family                = "aembit-agent-controller"
+  family                = "${var.ecs_task_prefix}agent_controller"
   container_definitions = jsonencode([{
-    name = "aembit-agent-controller"
+    name = "${var.ecs_task_prefix}agent_controller"
     image = var.agent_controller_image
     essential = true
     portMappings = [{
-      name          = "aembit-agent-controller-http"
+      name          = "aembit_agent_controller_http"
       containerPort = 80
       hostPort      = 80
       protocol      = "tcp"
       appProtocol   = "http"
     }]
-    logConfiguration = (var.create_cloudwatch_log_group ? {
+    logConfiguration = (var.log_group_name != null ? {
       logDriver = "awslogs"
       options = {
         awslogs-group = aws_cloudwatch_log_group.aembit_edge[0].name
         awslogs-region = data.aws_region.current.name
-        awslogs-stream-prefix = "agent-controller"
+        awslogs-stream-prefix = "agent_controller"
       }
     } : null)
     environment = [
       {"name": "TenantId", "value": var.aembit_tenantid },
-      {"name": "DEBUG", "value": "1" },
       {"name": "StackDomain", "value": var.aembit_stack },
-      {"name": "DeviceCode", "value": var.aembit_device_code }
+      {"name": "AgentControllerId", "value": var.aembit_agent_controller_id }
     ]
   }])
-  execution_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
+  task_role_arn = var.agent_controller_task_role_arn
+  execution_role_arn = var.agent_controller_execution_role_arn
   cpu = 256
   memory = 512
   network_mode = "awsvpc"
@@ -44,23 +66,15 @@ resource "aws_ecs_task_definition" "agent-controller" {
 }
 
 resource "aws_ecs_service" "agent-controller" {
-  name = "aembit-agent-controller"
+  name = "${var.ecs_service_prefix}agent_controller"
   desired_count = 1
   launch_type = "FARGATE"
   cluster = var.ecs_cluster
   task_definition = aws_ecs_task_definition.agent-controller.arn
-  enable_execute_command = false
+  enable_execute_command = true
   
-  service_connect_configuration {
-    enabled = true
-    service {
-      discovery_name = "aembit-agent-controller"
-      port_name = "aembit-agent-controller-http"
-      client_alias {
-        dns_name = "aembit-agent-controller"
-        port = 80
-      }
-    }
+  service_registries {
+    registry_arn = aws_service_discovery_service.agent-controller.arn
   }
   
   network_configuration {
@@ -73,8 +87,8 @@ resource "aws_ecs_service" "agent-controller" {
 
 # Log Group Resource (Optional)
 resource "aws_cloudwatch_log_group" "aembit_edge" {
-  count = (var.create_cloudwatch_log_group ? 1 : 0)
+  count = (var.log_group_name != null ? 1 : 0)
 
-  name                = "/aembit/edge"
+  name                = var.log_group_name
   retention_in_days   = 30
 }

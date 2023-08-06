@@ -1,24 +1,17 @@
-# Output for AgentProxy SideCar container
-#   To be added to Client Workload Task
+# Output for AgentProxy SideCar container that must be added to Client Workload Task Definition
 output "agent_proxy_container" {
     value = jsonencode({
-        name = "aembit-agent-proxy"
+        name = "aembit_agent_proxy"
         image = var.agent_proxy_image
         essential = true
         portMappings = [{
-            name          = "aembit-agent-proxy-http"
+            name          = "aembit_agent_proxy_http"
             containerPort = 8000
             hostPort      = 8000
             protocol      = "tcp"
             appProtocol   = "http"
-        },{
-            name          = "aembit-agent-proxy-https"
-            containerPort = 8443
-            hostPort      = 8443
-            protocol      = "tcp"
-            appProtocol   = "http"
         }]
-        logConfiguration = (var.create_cloudwatch_log_group ? {
+        logConfiguration = (var.log_group_name != null ? {
             logDriver = "awslogs"
             options = {
                 awslogs-group = aws_cloudwatch_log_group.aembit_edge[0].name
@@ -27,12 +20,17 @@ output "agent_proxy_container" {
             }
         } : null)
         environment = [
-            {"name": "AEMBIT_AGENT_CONTROLLER", "value": "http://aembit-agent-controller:80"},
+            {"name": "AEMBIT_AGENT_CONTROLLER", "value": "http://${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}:80"},
             {"name": "TRUSTED_CA_CERTS", "value": ""},
+            {"name": "RUST_LOG", "value": "debug"},
         ]
     })
 }
 
-output "ecs_cluster" {
-    value = var.ecs_cluster
+output "aembit_http_proxy" {
+    value = "http://localhost:8000"
+}
+
+output "aembit_https_proxy" {
+    value = "http://localhost:8000"
 }
