@@ -69,13 +69,13 @@ variable "ecs_security_groups" {
 variable "agent_controller_task_role_arn" {
   type = string
   description = "The AWS IAM Task Role to use for the Aembit AgentController Service container"
-  default = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
+  default = null
 }
 
 variable "agent_controller_execution_role_arn" {
   type = string
   description = "The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Aembit AgentController Service"
-  default = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
+  default = null
 }
 
 variable "log_group_name" {

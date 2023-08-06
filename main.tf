@@ -53,8 +53,8 @@ resource "aws_ecs_task_definition" "agent-controller" {
       {"name": "AgentControllerId", "value": var.aembit_agent_controller_id }
     ]
   }])
-  task_role_arn = var.agent_controller_task_role_arn
-  execution_role_arn = var.agent_controller_execution_role_arn
+  task_role_arn = (var.agent_controller_task_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_task_role_arn)
+  execution_role_arn = (var.agent_controller_execution_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_execution_role_arn)
   cpu = 256
   memory = 512
   network_mode = "awsvpc"
