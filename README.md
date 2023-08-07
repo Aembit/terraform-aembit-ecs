@@ -44,8 +44,34 @@ Steps:
     ]
     ```
 
-4) Run ```terraform apply``` or your typical terraform configuration scripts.
+With your Terraform code updated as described, you can then run ```terraform apply``` or your typical terraform configuration scripts to deploy Aembit Edge into your AWS ECS Client Workloads.
+
+## Configuration
+The following tables lists the configurable variables of the module and their default values.
+Note: Variables without defaults must be provided for the module to be used.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| aembit_tenantid | The Aembit TenantID with which to associate this installation and Client workloads | None |
+| aembit_agent_controller_id | The Aembit Agent Controller ID with which to associate this installation | None |
+| ecs_cluster | The AWS ECS Cluster into which the Aembit Agent Controller should be deployed | None |
+| ecs_vpc_id | The AWS VPC which the Aembit Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks. | None |
+| ecs_subnets | The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud. | None |
+| ecs_security_groups | The security group which will be assigned to the AgentController service. This security group must allow inbound HTTP access from the AgentProxy containers running in your Client Workload ECS Tasks. | None |
+| agent_controller_task_role_arn | The AWS IAM Task Role to use for the Aembit AgentController Service container. This role is used for AgentController registration with the Aembit Cloud Service. | ```arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole``` |
+| agent_controller_execution_role_arn | The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Aembit AgentController Service | ```arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole``` |
+| log_group_name | Specifies the name of an optional log group to create and send logs to for components created by this module. | ```/aembit/edge``` |
+| agent_controller_image | The container image to use for the AgentController installation |  |
+| agent_proxy_image | The container image to use for the AgentProxy installation | |
+| aembit_stack | The Aembit Stack which hosts the specified Tenant | ```useast2.aembit.io``` |
+| ecs_task_prefix | Prefix to include in front of the Agent Controller ECS Task Definitions to ensure uniqueness. | ```aembit_``` |
+| ecs_service_prefix | Prefix to include in front of the Agent Controller Service Name to ensure uniqueness. | ```aembit_``` |
+| ecs_private_dns_domain | The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity. | ```aembit.local``` |
 
 
-## Configuration Variables
-When you have completed using the ECS Globex deployment, you can simply run ```./deploy-tf.sh --destroy``` to tear everything down.
+## AWS Resources
+The following AWS Resources are created and managed as part of this Terraform Module.
+* AWS ECS Fargate Service
+  * AWS ECS Task Definition
+* AWS ECS Service Discovery DNS Namespace
+  * Service Discovery Service
+* AWS CloudWatch Log Group

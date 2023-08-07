@@ -22,7 +22,6 @@ output "agent_proxy_container" {
         environment = [
             {"name": "AEMBIT_AGENT_CONTROLLER", "value": "http://${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}:80"},
             {"name": "TRUSTED_CA_CERTS", "value": ""},
-            {"name": "RUST_LOG", "value": "debug"},
         ]
     })
 }

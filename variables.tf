@@ -1,18 +1,18 @@
 variable "ecs_task_prefix" {
   type = string
-  description = "Prefix to include in front of the ECS Task Definitions to ensure uniqueness"
+  description = "Prefix to include in front of the Agent Controller ECS Task Definitions to ensure uniqueness."
   default = "aembit_"
 }
 
 variable "ecs_service_prefix" {
   type = string
-  description = "Prefix to include in front of the ECS Service Name to ensure uniqueness"
+  description = "Prefix to include in front of the Agent Controller Service Name to ensure uniqueness."
   default = "aembit_"
 }
 
 variable "ecs_private_dns_domain" {
   type = string
-  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity"
+  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity."
   default = "aembit.local"
 }
 
@@ -24,7 +24,7 @@ variable "aembit_tenantid" {
 
 variable "aembit_agent_controller_id" {
   type = string
-  description = "The Aembit Agent Controller ID with which to associate this installation" 
+  description = "The Aembit Agent Controller ID with which to associate this installation"
 }
 
 variable "aembit_stack" {
@@ -42,7 +42,7 @@ variable "agent_controller_image" {
 variable "agent_proxy_image" {
   type = string
   description = "The container image to use for the AgentProxy installation"
-  default = "880961858887.dkr.ecr.us-east-2.amazonaws.com/aembit_agent_proxy:1.7.1141"
+  default = "880961858887.dkr.ecr.us-east-2.amazonaws.com/aembit_agent_proxy:1.7.1142"
 }
 
 # ECS CLUSTER Specific Variables
@@ -53,22 +53,22 @@ variable "ecs_cluster" {
 
 variable "ecs_vpc_id" {
   type = string
-  description = "value"
+  description = "The AWS VPC which the Aembit Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks."
 }
 
 variable "ecs_subnets" {
   type = list(string)
-  description = "The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud"
+  description = "The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud."
 }
 
 variable "ecs_security_groups" {
   type = list(string)
-  description = "The security group which will be assigned to the AgentController service"
+  description = "The security group(s) which will be assigned to the AgentController service. This security group must allow inbound HTTP access from the AgentProxy containers running in your Client Workload ECS Tasks."
 }
 
 variable "agent_controller_task_role_arn" {
   type = string
-  description = "The AWS IAM Task Role to use for the Aembit AgentController Service container"
+  description = "The AWS IAM Task Role to use for the Aembit AgentController Service container. This role is used for AgentController registration with the Aembit Cloud Service."
   default = null
 }
 
@@ -80,6 +80,6 @@ variable "agent_controller_execution_role_arn" {
 
 variable "log_group_name" {
   type = string
-  description = "Determines whether a log group is created by this module for the Aembit Edge containers"
+  description = "Specifies the name of an optional log group to create and send logs to for components created by this module."
   default = "/aembit/edge"
 }
