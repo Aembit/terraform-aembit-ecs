@@ -27,6 +27,12 @@ variable "aembit_agent_controller_id" {
   description = "The Aembit Agent Controller ID with which to associate this installation"
 }
 
+variable "aembit_trusted_ca_certs" {
+  type = string
+  description = "Additional CA Certificates that the Aembit AgentProxy should trust for Server Workload connectivity."
+  default = null
+}
+
 variable "aembit_stack" {
   type = string
   description = "The Aembit Stack which hosts the specified Tenant"

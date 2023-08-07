@@ -48,11 +48,11 @@ With your Terraform code updated as described, you can then run ```terraform app
 
 ## Configuration
 The following tables lists the configurable variables of the module and their default values.
-Note: Variables without defaults must be provided for the module to be used.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | aembit_tenantid | The Aembit TenantID with which to associate this installation and Client workloads | None |
 | aembit_agent_controller_id | The Aembit Agent Controller ID with which to associate this installation | None |
+| aembit_trusted_ca_certs | Additional CA Certificates that the Aembit AgentProxy should trust for Server Workload connectivity. | * Optional |
 | ecs_cluster | The AWS ECS Cluster into which the Aembit Agent Controller should be deployed | None |
 | ecs_vpc_id | The AWS VPC which the Aembit Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks. | None |
 | ecs_subnets | The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud. | None |
