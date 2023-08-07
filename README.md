@@ -26,7 +26,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
     ```
     Note: Additional configuration options are available and described below.
 
-2) Add the Aembit Agent Proxy container definition to your Client Workload Task Definitions. An example is available below, the key element being the configuration: ```jsondecode(module.aembit-ecs.agent_proxy_container),```
+2) Add the Aembit Agent Proxy container definition to your Client Workload Task Definitions. The example below, shows an example of this by injecting ```jsondecode(module.aembit-ecs.agent_proxy_container)``` as the first container of the Task definition for your Client Workload.
     ```
     resource "aws_ecs_task_definition" "workload_task" {
       family                = "workload_task"
