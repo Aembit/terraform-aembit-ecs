@@ -5,11 +5,11 @@
 * AWS CLI
 * Client Workload deployed to AWS ECS Fargate
 
-## Configuration & Deployment
+## Quick Start
 Generally, you can add the Aembit Edge components to your ECS Cluster and Client Workloads with only 3 steps.
 Individualized permissions, security groups, IAM Roles, etc are not within the scope of this document.
 
-Steps:
+**Steps:**
 1) Add the Aembit Edge ECS Module to your Terraform code, using configuration such as
     ```
     module "aembit-ecs" {
@@ -36,7 +36,7 @@ Steps:
           name = "workload"
     ```
 
-3) Add the require environment variables to your Client Workload Task Definitions. For example:
+3) Add the required environment variables to your Client Workload Task Definitions. For example:
     ```
     environment = [
       {"name": "http_proxy", "value": module.aembit-ecs.aembit_http_proxy},
@@ -44,7 +44,7 @@ Steps:
     ]
     ```
 
-With your Terraform code updated as described, you can then run ```terraform apply``` or your typical terraform configuration scripts to deploy Aembit Edge into your AWS ECS Client Workloads.
+With your Terraform code updated as described, you can then run ```terraform apply``` or your typical Terraform configuration scripts to deploy Aembit Edge into your AWS ECS Client Workloads.
 
 ## Configuration
 The following tables lists the configurable variables of the module and their default values.
@@ -70,8 +70,9 @@ The following tables lists the configurable variables of the module and their de
 
 ## AWS Resources
 The following AWS Resources are created and managed as part of this Terraform Module.
-* AWS ECS Fargate Service
-  * AWS ECS Task Definition
-* AWS ECS Service Discovery DNS Namespace
-  * Service Discovery Service
-* AWS CloudWatch Log Group
+* **AWS ECS Service (Service and Task Definition)**
+  This AWS ECS Fargate Service will run the Aembit AgentController container and ensure that all Aembit Edge managed Client Workloads are enrolled appropriately.
+* **AWS ECS Service Discovery (DNS Record & Namespace)**
+  This Route53 Private Hosted Zone will be created by AWS Cloud Map and provide DNS resolution of the Aembit AgentController so that the Aembit AgentProxy can connect appropriately.
+* **AWS CloudWatch Log Group**
+  This optional CloudWatch Group will be created and configured to store all logs from the Aembit AgentProxy and AgentController containers.
