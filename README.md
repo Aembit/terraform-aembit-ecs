@@ -34,6 +34,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
         jsondecode(module.aembit-ecs.agent_proxy_container),
         {
           name = "workload"
+          ...
     ```
 
 3) Add the required environment variables to your Client Workload Task Definitions. For example:
