@@ -11,7 +11,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
 
 **Steps:**
 1) Add the Aembit Edge ECS Module to your Terraform code, using configuration such as
-    ```json
+    ```hcl
     module "aembit-ecs" {
       source = "../../../terraform-aembit-ecs"
 
@@ -27,7 +27,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
     Note: Additional configuration options are available and described below.
 
 2) Add the Aembit Agent Proxy container definition to your Client Workload Task Definitions. The code below, shows an example of this by injecting ```jsondecode(module.aembit-ecs.agent_proxy_container)``` as the first container of the Task definition for your Client Workload.
-    ```json
+    ```hcl
     resource "aws_ecs_task_definition" "workload_task" {
       family                = "workload_task"
       container_definitions = jsonencode([
@@ -38,7 +38,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
     ```
 
 3) Add the required environment variables to your Client Workload Task Definitions. For example:
-    ```json
+    ```hcl
     environment = [
       {"name": "http_proxy", "value": module.aembit-ecs.aembit_http_proxy},
       {"name": "https_proxy", "value": module.aembit-ecs.aembit_https_proxy}
