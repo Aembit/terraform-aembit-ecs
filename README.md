@@ -11,7 +11,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
 
 **Steps:**
 1) Add the Aembit Edge ECS Module to your Terraform code, using configuration such as
-    ```
+    ```json
     module "aembit-ecs" {
       source = "../../../terraform-aembit-ecs"
 
@@ -26,8 +26,8 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
     ```
     Note: Additional configuration options are available and described below.
 
-2) Add the Aembit Agent Proxy container definition to your Client Workload Task Definitions. The example below, shows an example of this by injecting ```jsondecode(module.aembit-ecs.agent_proxy_container)``` as the first container of the Task definition for your Client Workload.
-    ```
+2) Add the Aembit Agent Proxy container definition to your Client Workload Task Definitions. The code below, shows an example of this by injecting ```jsondecode(module.aembit-ecs.agent_proxy_container)``` as the first container of the Task definition for your Client Workload.
+    ```json
     resource "aws_ecs_task_definition" "workload_task" {
       family                = "workload_task"
       container_definitions = jsonencode([
@@ -38,7 +38,7 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
     ```
 
 3) Add the required environment variables to your Client Workload Task Definitions. For example:
-    ```
+    ```json
     environment = [
       {"name": "http_proxy", "value": module.aembit-ecs.aembit_http_proxy},
       {"name": "https_proxy", "value": module.aembit-ecs.aembit_https_proxy}
@@ -48,22 +48,22 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
 With your Terraform code updated as described, you can then run ```terraform apply``` or your typical Terraform configuration scripts to deploy Aembit Edge into your AWS ECS Client Workloads.
 
 ## Configuration
-The following tables lists the configurable variables of the module and their default values.
+The following tables lists the configurable variables of the module and their default values. All variables are required unless marked optional.
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| aembit_tenantid | The Aembit TenantID with which to associate this installation and Client workloads | None |
-| aembit_agent_controller_id | The Aembit Agent Controller ID with which to associate this installation | None |
-| aembit_trusted_ca_certs | Additional CA Certificates that the Aembit AgentProxy should trust for Server Workload connectivity. | * Optional |
-| ecs_cluster | The AWS ECS Cluster into which the Aembit Agent Controller should be deployed | None |
+| aembit_tenantid | The Aembit TenantID with which to associate this installation and Client workloads. | None |
+| aembit_agent_controller_id | The Aembit Agent Controller ID with which to associate this installation. | None |
+| aembit_trusted_ca_certs | Additional CA Certificates that the Aembit AgentProxy should trust for Server Workload connectivity. | *Optional* |
+| ecs_cluster | The AWS ECS Cluster into which the Aembit Agent Controller should be deployed. | None |
 | ecs_vpc_id | The AWS VPC which the Aembit Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks. | None |
 | ecs_subnets | The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud. | None |
 | ecs_security_groups | The security group which will be assigned to the AgentController service. This security group must allow inbound HTTP access from the AgentProxy containers running in your Client Workload ECS Tasks. | None |
 | agent_controller_task_role_arn | The AWS IAM Task Role to use for the Aembit AgentController Service container. This role is used for AgentController registration with the Aembit Cloud Service. | ```arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole``` |
-| agent_controller_execution_role_arn | The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Aembit AgentController Service | ```arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole``` |
-| log_group_name | Specifies the name of an optional log group to create and send logs to for components created by this module. | ```/aembit/edge``` |
-| agent_controller_image | The container image to use for the AgentController installation |  |
-| agent_proxy_image | The container image to use for the AgentProxy installation | |
-| aembit_stack | The Aembit Stack which hosts the specified Tenant | ```useast2.aembit.io``` |
+| agent_controller_execution_role_arn | The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Aembit AgentController Service. | ```arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole``` |
+| log_group_name | Specifies the name of an optional log group to create and send logs to for components created by this module. | ```/aembit/edge``` *Optional, can be set to ```null```* |
+| agent_controller_image | The container image to use for the AgentController installation. |  |
+| agent_proxy_image | The container image to use for the AgentProxy installation. | |
+| aembit_stack | The Aembit Stack which hosts the specified Tenant. | ```useast2.aembit.io``` |
 | ecs_task_prefix | Prefix to include in front of the Agent Controller ECS Task Definitions to ensure uniqueness. | ```aembit_``` |
 | ecs_service_prefix | Prefix to include in front of the Agent Controller Service Name to ensure uniqueness. | ```aembit_``` |
 | ecs_private_dns_domain | The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity. | ```aembit.local``` |
