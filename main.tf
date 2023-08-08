@@ -52,6 +52,13 @@ resource "aws_ecs_task_definition" "agent-controller" {
       {"name": "StackDomain", "value": var.aembit_stack },
       {"name": "AgentControllerId", "value": var.aembit_agent_controller_id }
     ]
+    healthCheck = {
+      retries = 3
+      command = [ "CMD-SHELL", "/app/healthCheck" ]
+      timeout = 2
+      interval = 5
+      startPeriod = 5
+    }
   }])
   task_role_arn = (var.agent_controller_task_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_task_role_arn)
   execution_role_arn = (var.agent_controller_execution_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_execution_role_arn)
@@ -71,7 +78,7 @@ resource "aws_ecs_service" "agent-controller" {
   launch_type = "FARGATE"
   cluster = var.ecs_cluster
   task_definition = aws_ecs_task_definition.agent-controller.arn
-  enable_execute_command = true
+  enable_execute_command = false
   
   service_registries {
     registry_arn = aws_service_discovery_service.agent-controller.arn
