@@ -13,7 +13,8 @@ Individualized permissions, security groups, IAM Roles, etc are not within the s
 1) Add the Aembit Edge ECS Module to your Terraform code, using configuration such as
     ```hcl
     module "aembit-ecs" {
-      source = "../../../terraform-aembit-ecs"
+      source  = "Aembit/ecs/aembit"
+      version = "1.x.y" # Find the latest version at https://registry.terraform.io/modules/Aembit/ecs/aembit/latest
 
       aembit_tenantid = "abc123"
       aembit_agent_controller_id = "00000000-0000-0000-0000-000000000000"
