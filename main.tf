@@ -48,9 +48,9 @@ resource "aws_ecs_task_definition" "agent-controller" {
       }
     } : null)
     environment = [
-      {"name": "TenantId", "value": var.aembit_tenantid },
+      {"name": "AEMBIT_TENANT_ID", "value": var.aembit_tenantid },
       {"name": "StackDomain", "value": var.aembit_stack },
-      {"name": "AgentControllerId", "value": var.aembit_agent_controller_id }
+      {"name": "AEMBIT_AGENT_CONTROLLER_ID", "value": var.aembit_agent_controller_id }
     ]
     healthCheck = {
       retries = 3
