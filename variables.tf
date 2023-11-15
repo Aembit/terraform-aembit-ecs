@@ -42,13 +42,13 @@ variable "aembit_stack" {
 variable "agent_controller_image" {
   type = string
   description = "The container image to use for the AgentController installation"
-  default = "aembit/aembit_agent_controller:1.8.524"
+  default = "aembit/aembit_agent_controller:1.9.696"
 }
 
 variable "agent_proxy_image" {
   type = string
   description = "The container image to use for the AgentProxy installation"
-  default = "aembit/aembit_agent_proxy:1.9.1221"
+  default = "aembit/aembit_agent_proxy:1.9.1337"
 }
 
 # ECS CLUSTER Specific Variables
