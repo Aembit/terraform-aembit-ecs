@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "agent-controller" {
     } : null)
     environment = [
       {"name": "AEMBIT_TENANT_ID", "value": var.aembit_tenantid },
-      {"name": "StackDomain", "value": var.aembit_stack },
+      {"name": "AEMBIT_STACK_DOMAIN", "value": var.aembit_stack },
       {"name": "AEMBIT_AGENT_CONTROLLER_ID", "value": var.aembit_agent_controller_id }
     ]
     healthCheck = {
