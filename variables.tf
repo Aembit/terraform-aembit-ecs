@@ -12,54 +12,60 @@ variable "ecs_service_prefix" {
 
 variable "ecs_private_dns_domain" {
   type = string
-  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity."
+  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for Agent Proxy to Agent Controller connectivity."
   default = "aembit.local"
 }
 
 # Aembit Specific Variables
 variable "aembit_tenantid" {
   type = string
-  description = "The Aembit TenantID with which to associate this installation and Client workloads"
+  description = "The Aembit tenant ID with which to associate this installation and Client Workloads."
 }
 
 variable "aembit_agent_controller_id" {
   type = string
-  description = "The Aembit Agent Controller ID with which to associate this installation"
+  description = "The Agent Controller ID with which to associate this installation."
 }
 
 variable "aembit_trusted_ca_certs" {
   type = string
-  description = "Additional CA Certificates that the Aembit AgentProxy should trust for Server Workload connectivity."
+  description = "Additional CA Certificates that the Agent Proxy should trust for Server Workload connectivity."
   default = null
 }
 
 variable "aembit_stack" {
   type = string
-  description = "The Aembit Stack which hosts the specified Tenant"
+  description = "The Aembit Stack which hosts the specified Tenant."
   default = "useast2.aembit.io"
 }
 
 variable "agent_controller_image" {
   type = string
-  description = "The container image to use for the AgentController installation"
+  description = "The container image to use for the Agent Controller installation."
   default = "aembit/aembit_agent_controller:1.12.974"
 }
 
 variable "agent_proxy_image" {
   type = string
-  description = "The container image to use for the AgentProxy installation"
+  description = "The container image to use for the Agent Proxy installation."
   default = "aembit/aembit_agent_proxy:1.13.1851"
+}
+
+variable "agent_proxy_resource_set_id" {
+  type = string
+  description = "The resource set ID to use for the Agent Proxy installation."
+  default = null
 }
 
 # ECS CLUSTER Specific Variables
 variable "ecs_cluster" {
   type = string
-  description = "The AWS ECS Cluster into which the Aembit Agent Controller should be deployed"
+  description = "The AWS ECS Cluster into which the Agent Controller should be deployed."
 }
 
 variable "ecs_vpc_id" {
   type = string
-  description = "The AWS VPC which the Aembit Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks."
+  description = "The AWS VPC which the Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks."
 }
 
 variable "ecs_subnets" {
@@ -69,18 +75,18 @@ variable "ecs_subnets" {
 
 variable "ecs_security_groups" {
   type = list(string)
-  description = "The security group(s) which will be assigned to the AgentController service. This security group must allow inbound HTTP access from the AgentProxy containers running in your Client Workload ECS Tasks."
+  description = "The security group(s) which will be assigned to the Agent Controller service. This security group must allow inbound HTTP access from the Agent Proxy containers running in your Client Workload ECS Tasks."
 }
 
 variable "agent_controller_task_role_arn" {
   type = string
-  description = "The AWS IAM Task Role to use for the Aembit AgentController Service container. This role is used for AgentController registration with the Aembit Cloud Service."
+  description = "The AWS IAM Task Role to use for the Agent Controller service container. This role is used for Agent Controller registration with the Aembit Cloud service."
   default = null
 }
 
 variable "agent_controller_execution_role_arn" {
   type = string
-  description = "The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Aembit AgentController Service"
+  description = "The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Agent Controller service."
   default = null
 }
 
