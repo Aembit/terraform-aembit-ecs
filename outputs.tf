@@ -22,7 +22,8 @@ output "agent_proxy_container" {
         environment = [
             {"name": "AEMBIT_AGENT_CONTROLLER", "value": "http://${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}:80"},
             {"name": "TRUSTED_CA_CERTS", "value": var.aembit_trusted_ca_certs },
-            {"name": "AEMBIT_RESOURCE_SET_ID", "value": var.agent_proxy_resource_set_id }
+            {"name": "AEMBIT_RESOURCE_SET_ID", "value": var.agent_proxy_resource_set_id },
+            {"name": "AEMBIT_AGENT_PROXY_DEPLOYMENT_MODEL", "value": "ecs-fargate" }
         ]
     })
 }
