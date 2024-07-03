@@ -33,11 +33,10 @@ resource "aws_ecs_task_definition" "agent-controller" {
     image = var.agent_controller_image
     essential = true
     portMappings = [{
-      name          = "aembit_agent_controller_http"
-      containerPort = 80
-      hostPort      = 80
+      name          = "aembit_agent_controller_https"
+      containerPort = 443
+      hostPort      = 443
       protocol      = "tcp"
-      appProtocol   = "http"
     }]
     logConfiguration = (var.log_group_name != null ? {
       logDriver = "awslogs"
