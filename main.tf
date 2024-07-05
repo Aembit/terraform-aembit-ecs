@@ -72,6 +72,23 @@ resource "aws_ecs_task_definition" "agent-controller" {
   }
 }
 
+locals {
+  domain_parts = split(".", "${var.aembit_stack}")
+  base_domain = join(".", slice("${local.domain_parts}", 1, 3))
+}
+
+data "http" "trusted_ca_cert" {
+  url = "https://${var.aembit_tenantid}.${local.base_domain}/api/v1/root-ca"
+  
+  lifecycle {
+    postcondition {
+        condition = self.status_code == 200
+        error_message = "${self.url} returned an unhealthy status code"
+    }
+  }
+}
+
+
 resource "aws_ecs_service" "agent-controller" {
   name = "${var.ecs_service_prefix}agent_controller"
   desired_count = 1
