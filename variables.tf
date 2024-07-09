@@ -29,7 +29,7 @@ variable "aembit_agent_controller_id" {
 
 variable "aembit_trusted_ca_certs" {
   type = string
-  description = "Additional CA Certificates that the Agent Proxy should trust for Server Workload connectivity."
+  description = "Additional CA Certificates that the Agent Proxy should trust for Server Workload connectivity, base64 encoded."
   default = null
 }
 
