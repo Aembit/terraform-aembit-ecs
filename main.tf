@@ -73,8 +73,14 @@ resource "aws_ecs_task_definition" "agent-controller" {
 }
 
 locals {
+  # Extract the "base domain" (e.g. aembit-eng.com ) from the stack domain.
   domain_parts = split(".", "${var.aembit_stack}")
   base_domain = join(".", slice("${local.domain_parts}", 1, 3))
+
+  # Concatenating passed-in trusted CA certs with the tenant root CA
+  base64_decoded_env_certs = !(var.aembit_trusted_ca_certs == null || var.aembit_trusted_ca_certs == "") ? base64decode("${var.aembit_trusted_ca_certs}") : null
+  all_certs = local.base64_decoded_env_certs != null ? "${local.base64_decoded_env_certs}\n${data.http.trusted_ca_cert.response_body}" : "${data.http.trusted_ca_cert.response_body}"
+  all_certs_base64 = base64encode("${local.all_certs}")
 }
 
 data "http" "trusted_ca_cert" {
