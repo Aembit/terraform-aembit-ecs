@@ -74,13 +74,13 @@ resource "aws_ecs_task_definition" "agent-controller" {
 
 locals {
   # Extract the "base domain" (e.g. aembit-eng.com ) from the stack domain.
-  domain_parts = split(".", "${var.aembit_stack}")
-  base_domain = join(".", slice("${local.domain_parts}", 1, 3))
+  _domain_parts = split(".", "${var.aembit_stack}")
+  base_domain = join(".", slice("${local._domain_parts}", 1, 3))
 
   # Concatenating passed-in trusted CA certs with the tenant root CA
-  passed_in_certs_pem = !(var.aembit_trusted_ca_certs == null || var.aembit_trusted_ca_certs == "") ? base64decode("${var.aembit_trusted_ca_certs}") : null
-  all_trusted_ca_certs_pem = local.passed_in_certs_pem != null ? "${local.passed_in_certs_pem}\n${data.http.trusted_ca_cert.response_body}" : "${data.http.trusted_ca_cert.response_body}"
-  all_trusted_ca_certs_base64 = base64encode("${local.all_trusted_ca_certs_pem}")
+  _passed_in_certs_pem = !(var.aembit_trusted_ca_certs == null || var.aembit_trusted_ca_certs == "") ? base64decode("${var.aembit_trusted_ca_certs}") : null
+  _all_trusted_ca_certs_pem = local._passed_in_certs_pem != null ? "${local._passed_in_certs_pem}\n${data.http.trusted_ca_cert.response_body}" : "${data.http.trusted_ca_cert.response_body}"
+  all_trusted_ca_certs_base64 = base64encode("${local._all_trusted_ca_certs_pem}")
 }
 
 data "http" "trusted_ca_cert" {
