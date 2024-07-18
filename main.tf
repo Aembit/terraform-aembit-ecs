@@ -33,11 +33,10 @@ resource "aws_ecs_task_definition" "agent-controller" {
     image = var.agent_controller_image
     essential = true
     portMappings = [{
-      name          = "aembit_agent_controller_http"
-      containerPort = 80
-      hostPort      = 80
+      name          = "aembit_agent_controller_https"
+      containerPort = 443
+      hostPort      = 443
       protocol      = "tcp"
-      appProtocol   = "http"
     }]
     logConfiguration = (var.log_group_name != null ? {
       logDriver = "awslogs"
@@ -50,7 +49,8 @@ resource "aws_ecs_task_definition" "agent-controller" {
     environment = [
       {"name": "AEMBIT_TENANT_ID", "value": var.aembit_tenantid },
       {"name": "AEMBIT_STACK_DOMAIN", "value": var.aembit_stack },
-      {"name": "AEMBIT_AGENT_CONTROLLER_ID", "value": var.aembit_agent_controller_id }
+      {"name": "AEMBIT_AGENT_CONTROLLER_ID", "value": var.aembit_agent_controller_id },
+      {"name": "AEMBIT_MANAGED_TLS_HOSTNAME", "value": "${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}"}
     ]
     healthCheck = {
       retries = 3
@@ -71,6 +71,29 @@ resource "aws_ecs_task_definition" "agent-controller" {
     cpu_architecture        = "X86_64"
   }
 }
+
+locals {
+  # Extract the "base domain" (e.g. aembit-eng.com ) from the stack domain.
+  _domain_parts = split(".", "${var.aembit_stack}")
+  base_domain = join(".", slice("${local._domain_parts}", 1, 3))
+
+  # Concatenating passed-in trusted CA certs with the tenant root CA
+  _passed_in_certs_pem = !(var.aembit_trusted_ca_certs == null || var.aembit_trusted_ca_certs == "") ? base64decode("${var.aembit_trusted_ca_certs}") : null
+  _all_trusted_ca_certs_pem = local._passed_in_certs_pem != null ? "${local._passed_in_certs_pem}\n${data.http.trusted_ca_cert.response_body}" : "${data.http.trusted_ca_cert.response_body}"
+  all_trusted_ca_certs_base64 = base64encode("${local._all_trusted_ca_certs_pem}")
+}
+
+data "http" "trusted_ca_cert" {
+  url = "https://${var.aembit_tenantid}.${local.base_domain}/api/v1/root-ca"
+  
+  lifecycle {
+    postcondition {
+        condition = self.status_code == 200
+        error_message = "${self.url} returned an unhealthy status code"
+    }
+  }
+}
+
 
 resource "aws_ecs_service" "agent-controller" {
   name = "${var.ecs_service_prefix}agent_controller"
