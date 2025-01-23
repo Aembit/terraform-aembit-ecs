@@ -32,7 +32,7 @@ output "agent_proxy_container" {
     })
 }
 
-output "agent_proxy_default_env_variables" {
+output "agent_proxy_default_environment" {
     value = local.agent_proxy_default_environment_variables
 }
 
