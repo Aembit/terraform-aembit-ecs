@@ -1,97 +1,97 @@
 variable "ecs_task_prefix" {
-  type = string
+  type        = string
   description = "Prefix to include in front of the Agent Controller ECS Task Definitions to ensure uniqueness."
-  default = "aembit_"
+  default     = "aembit_"
 }
 
 variable "ecs_service_prefix" {
-  type = string
+  type        = string
   description = "Prefix to include in front of the Agent Controller Service Name to ensure uniqueness."
-  default = "aembit_"
+  default     = "aembit_"
 }
 
 variable "ecs_private_dns_domain" {
-  type = string
+  type        = string
   description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for Agent Proxy to Agent Controller connectivity."
-  default = "aembit.local"
+  default     = "aembit.local"
 }
 
 # Aembit Specific Variables
 variable "aembit_tenantid" {
-  type = string
+  type        = string
   description = "The Aembit tenant ID with which to associate this installation and Client Workloads."
 }
 
 variable "aembit_agent_controller_id" {
-  type = string
+  type        = string
   description = "The Agent Controller ID with which to associate this installation."
 }
 
 variable "aembit_trusted_ca_certs" {
-  type = string
+  type        = string
   description = "Additional CA Certificates that the Agent Proxy should trust for Server Workload connectivity, base64 encoded."
-  default = null
+  default     = null
 }
 
 variable "aembit_stack" {
-  type = string
+  type        = string
   description = "The Aembit Stack which hosts the specified Tenant."
-  default = "useast2.aembit.io"
+  default     = "useast2.aembit.io"
 }
 
 variable "agent_controller_image" {
-  type = string
+  type        = string
   description = "The container image to use for the Agent Controller installation."
-  default = "aembit/aembit_agent_controller:1.19.1752"
+  default     = "aembit/aembit_agent_controller:1.19.1752"
 }
 
 variable "agent_proxy_image" {
-  type = string
+  type        = string
   description = "The container image to use for the Agent Proxy installation."
-  default = "aembit/aembit_agent_proxy:1.19.2439"
+  default     = "aembit/aembit_agent_proxy:1.21.2670"
 }
 
 variable "agent_proxy_resource_set_id" {
-  type = string
+  type        = string
   description = "The resource set ID to use for the Agent Proxy installation."
-  default = null
+  default     = null
 }
 
 # ECS CLUSTER Specific Variables
 variable "ecs_cluster" {
-  type = string
+  type        = string
   description = "The AWS ECS Cluster into which the Agent Controller should be deployed."
 }
 
 variable "ecs_vpc_id" {
-  type = string
+  type        = string
   description = "The AWS VPC which the Agent Controller will be configured for network connectivity. This must be the same VPC as your Client Workload ECS Tasks."
 }
 
 variable "ecs_subnets" {
-  type = list(string)
+  type        = list(string)
   description = "The subnets which the Aembit Agent Controller and Agent Proxy containers can utilize for connectivity between Proxy and Controller and Aembit Cloud."
 }
 
 variable "ecs_security_groups" {
-  type = list(string)
+  type        = list(string)
   description = "The security group(s) which will be assigned to the Agent Controller service. This security group must allow inbound HTTP access from the Agent Proxy containers running in your Client Workload ECS Tasks."
 }
 
 variable "agent_controller_task_role_arn" {
-  type = string
+  type        = string
   description = "The AWS IAM Task Role to use for the Agent Controller service container. This role is used for Agent Controller registration with the Aembit Cloud service."
-  default = null
+  default     = null
 }
 
 variable "agent_controller_execution_role_arn" {
-  type = string
+  type        = string
   description = "The AWS IAM Task Execution Role used by Amazon ECS and Fargate agents for the Agent Controller service."
-  default = null
+  default     = null
 }
 
 variable "log_group_name" {
-  type = string
+  type        = string
   description = "Specifies the name of an optional log group to create and send logs to for components created by this module."
-  default = "/aembit/edge"
+  default     = "/aembit/edge"
 }
