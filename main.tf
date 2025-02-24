@@ -53,11 +53,11 @@ resource "aws_ecs_task_definition" "agent-controller" {
       {"name": "AEMBIT_MANAGED_TLS_HOSTNAME", "value": "${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}"}
     ]
     healthCheck = {
-      retries = 3
+      retries = 6
       command = [ "CMD-SHELL", "/app/healthCheck" ]
-      timeout = 2
-      interval = 5
-      startPeriod = 5
+      timeout = 3
+      interval = 7
+      startPeriod = 30
     }
   }])
   task_role_arn = (var.agent_controller_task_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_task_role_arn)
