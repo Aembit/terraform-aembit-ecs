@@ -39,6 +39,12 @@ variable "aembit_stack" {
   default     = "useast2.aembit.io"
 }
 
+variable "aembit_http_port_disabled" {
+  type        = bool
+  description = "If true, the Agent Controller will not listen on its HTTP port (only HTTPS)."
+  default = false
+}
+
 variable "agent_controller_image" {
   type        = string
   description = "The container image to use for the Agent Controller installation."
