@@ -45,6 +45,16 @@ variable "aembit_http_port_disabled" {
   default = false
 }
 
+variable "agent_controller_log_level" {
+  type        = string
+  description = "Log level for the Agent Controller. Must be one of: fatal, error, warning, information, debug, verbose."
+  default     = "information"
+  validation {
+    condition     = contains(["fatal", "error", "warning", "information", "debug", "verbose"], var.agent_controller_log_level)
+    error_message = "agent_controller_log_level must be one of: fatal, error, warning, information, debug, verbose."
+  }
+}
+
 variable "agent_controller_image" {
   type        = string
   description = "The container image to use for the Agent Controller installation."
