@@ -50,7 +50,9 @@ resource "aws_ecs_task_definition" "agent-controller" {
       {"name": "AEMBIT_TENANT_ID", "value": var.aembit_tenantid },
       {"name": "AEMBIT_STACK_DOMAIN", "value": var.aembit_stack },
       {"name": "AEMBIT_AGENT_CONTROLLER_ID", "value": var.aembit_agent_controller_id },
-      {"name": "AEMBIT_MANAGED_TLS_HOSTNAME", "value": "${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}"}
+      {"name": "AEMBIT_MANAGED_TLS_HOSTNAME", "value": "${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}"},
+      {"name": "AEMBIT_HTTP_PORT_DISABLED", "value": tostring(var.aembit_http_port_disabled) }
+
     ]
     healthCheck = {
       retries = 6
