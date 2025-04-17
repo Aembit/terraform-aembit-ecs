@@ -73,6 +73,12 @@ variable "agent_proxy_resource_set_id" {
   default     = null
 }
 
+variable "agent_proxy_environment_variables" {
+  type        = map(string)
+  description = "A map of environment variables to define in the Agent Proxy container."
+  default     = {}
+}
+
 # ECS CLUSTER Specific Variables
 variable "ecs_cluster" {
   type        = string
