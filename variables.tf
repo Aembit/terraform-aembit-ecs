@@ -45,12 +45,6 @@ variable "aembit_http_port_disabled" {
   default     = false
 }
 
-variable "agent_controller_environment_variables" {
-  type        = map(string)
-  description = "Optional environment variables for the Agent Controller container, e.g. AEMBIT_LOG_LEVEL."
-  default     = {}
-}
-
 variable "agent_controller_image" {
   type        = string
   description = "The container image to use for the Agent Controller installation."
