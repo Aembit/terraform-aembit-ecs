@@ -45,14 +45,10 @@ variable "aembit_http_port_disabled" {
   default     = false
 }
 
-variable "agent_controller_log_level" {
-  type        = string
-  description = "Log level for the Agent Controller. Must be one of: fatal, error, warning, information, debug, verbose."
-  default     = "warning"
-  validation {
-    condition     = contains(["fatal", "error", "warning", "information", "debug", "verbose"], var.agent_controller_log_level)
-    error_message = "agent_controller_log_level must be one of: fatal, error, warning, information, debug, verbose."
-  }
+variable "agent_controller_environment_variables" {
+  type        = map(string)
+  description = "Optional environment variables for the Agent Controller container, e.g. AEMBIT_LOG_LEVEL."
+  default     = {}
 }
 
 variable "agent_controller_image" {
@@ -76,6 +72,12 @@ variable "agent_proxy_resource_set_id" {
 variable "agent_proxy_environment_variables" {
   type        = map(string)
   description = "A map of environment variables to define in the Agent Proxy container."
+  default     = {}
+}
+
+variable "agent_controller_environment_variables" {
+  type        = map(string)
+  description = "A map of environment variables to define in the Agent Controller container."
   default     = {}
 }
 
