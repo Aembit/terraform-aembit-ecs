@@ -6,6 +6,19 @@ locals {
     "AEMBIT_AGENT_PROXY_DEPLOYMENT_MODEL" : "ecs_fargate",
   }
   agent_proxy_effective_environment_variables = merge(local.agent_proxy_default_environment_variables, var.agent_proxy_environment_variables)
+
+  agent_controller_default_environment_variables = {
+    "AEMBIT_TENANT_ID"              = var.aembit_tenantid,
+    "AEMBIT_STACK_DOMAIN"           = var.aembit_stack,
+    "AEMBIT_AGENT_CONTROLLER_ID"    = var.aembit_agent_controller_id,
+    "AEMBIT_MANAGED_TLS_HOSTNAME"   = "${aws_service_discovery_service.agent-controller.name}.${aws_service_discovery_private_dns_namespace.agent-controller.name}",
+    "AEMBIT_HTTP_PORT_DISABLED"     = tostring(var.aembit_http_port_disabled)
+  }
+
+  agent_controller_effective_environment_variables = merge(
+    local.agent_controller_default_environment_variables,
+    var.agent_controller_environment_variables
+  )
 }
 
 # Output for Agent Proxy sidecar container that must be added to Client Workload Task Definition
