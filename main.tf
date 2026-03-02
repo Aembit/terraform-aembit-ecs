@@ -32,6 +32,10 @@ resource "aws_ecs_task_definition" "agent-controller" {
     name      = "${var.ecs_task_prefix}agent_controller"
     image     = var.agent_controller_image
     essential = true
+    systemControls = [{
+      namespace = "net.ipv4.ip_unprivileged_port_start"
+      value     = "80"
+    }]
     portMappings = [{
       name          = "aembit_agent_controller_https"
       containerPort = 443
