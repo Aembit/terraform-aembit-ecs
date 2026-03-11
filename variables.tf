@@ -48,13 +48,13 @@ variable "aembit_http_port_disabled" {
 variable "agent_controller_image" {
   type        = string
   description = "The container image to use for the Agent Controller installation."
-  default     = "aembit/aembit_agent_controller:1.27.2906"
+  default     = "aembit/aembit_agent_controller:1.30.3336"
 }
 
 variable "agent_proxy_image" {
   type        = string
   description = "The container image to use for the Agent Proxy installation."
-  default     = "aembit/aembit_agent_proxy:1.28.4063"
+  default     = "aembit/aembit_agent_proxy:1.30.4433"
 }
 
 variable "agent_proxy_resource_set_id" {
@@ -113,6 +113,7 @@ variable "log_group_name" {
   description = "Specifies the name of an optional log group to create and send logs to for components created by this module."
   default     = "/aembit/edge"
 }
+
 
 
 
