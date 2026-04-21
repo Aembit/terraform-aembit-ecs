@@ -12,8 +12,14 @@ variable "ecs_service_prefix" {
 
 variable "ecs_private_dns_domain" {
   type        = string
-  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for Agent Proxy to Agent Controller connectivity."
+  description = "The Private DNS TLD that will be configured and used in the specified AWS VPC for Agent Proxy to Agent Controller connectivity. If using an existing service discovery registry, this must match the domain name of your existing Private DNS Namespace."
   default     = "aembit.local"
+}
+
+variable "service_discovery_service_name" {
+  type        = string
+  description = "The name of the service discovery service. If using an existing service discovery registry, this must match the name of your existing service to ensure proper DNS resolution for the Agent Controller."
+  default     = "agent-controller"
 }
 
 # Aembit Specific Variables
@@ -114,7 +120,12 @@ variable "log_group_name" {
   default     = "/aembit/edge"
 }
 
-
+# Support passing in a specific service discovery registry_arn
+variable "service_discovery_registry_arn" {
+  type        = string
+  default     = null
+  description = "The ARN of an existing Service Discovery Service to use. If provided, the module will skip creating its own Service Discovery Service and Private DNS Namespace. When using this option, ensure ecs_private_dns_domain and service_discovery_service_name are set to match your existing configuration for proper internal routing."
+}
 
 
 

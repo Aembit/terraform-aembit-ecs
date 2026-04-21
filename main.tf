@@ -3,10 +3,11 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_service_discovery_service" "agent-controller" {
-  name        = "agent-controller"
+  count       = var.service_discovery_registry_arn == null ? 1 : 0
+  name        = var.service_discovery_service_name
   description = "Private DNS Record for Aembit AgentController connectivity"
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.agent-controller.id
+    namespace_id = aws_service_discovery_private_dns_namespace.agent-controller[0].id
     dns_records {
       ttl  = 10
       type = "A"
@@ -19,6 +20,7 @@ resource "aws_service_discovery_service" "agent-controller" {
 }
 
 resource "aws_service_discovery_private_dns_namespace" "agent-controller" {
+  count       = var.service_discovery_registry_arn == null ? 1 : 0
   name        = var.ecs_private_dns_domain
   description = "Private DNS Namespace for Aembit AgentController connectivity"
   vpc         = var.ecs_vpc_id
@@ -108,7 +110,7 @@ resource "aws_ecs_service" "agent-controller" {
   enable_execute_command = false
 
   service_registries {
-    registry_arn = aws_service_discovery_service.agent-controller.arn
+    registry_arn = var.service_discovery_registry_arn != null ? var.service_discovery_registry_arn : aws_service_discovery_service.agent-controller[0].arn
   }
 
   network_configuration {
