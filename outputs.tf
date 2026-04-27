@@ -1,6 +1,8 @@
 locals {
+  agent_controller_hostname = var.service_discovery_registry_arn == null ? "${aws_service_discovery_service.agent-controller[0].name}.${aws_service_discovery_private_dns_namespace.agent-controller[0].name}" : "${var.service_discovery_service_name}.${var.ecs_private_dns_domain}"
+
   agent_proxy_default_environment_variables = {
-    "AEMBIT_AGENT_CONTROLLER" : "https://${var.service_discovery_service_name}.${var.ecs_private_dns_domain}:443",
+    "AEMBIT_AGENT_CONTROLLER" : "https://${local.agent_controller_hostname}:443",
     "TRUSTED_CA_CERTS" : local.all_trusted_ca_certs_base64,
     "AEMBIT_RESOURCE_SET_ID" : var.agent_proxy_resource_set_id,
     "AEMBIT_AGENT_PROXY_DEPLOYMENT_MODEL" : "ecs_fargate",
@@ -8,11 +10,11 @@ locals {
   agent_proxy_effective_environment_variables = merge(local.agent_proxy_default_environment_variables, var.agent_proxy_environment_variables)
 
   agent_controller_default_environment_variables = {
-    "AEMBIT_TENANT_ID"              = var.aembit_tenantid,
-    "AEMBIT_STACK_DOMAIN"           = var.aembit_stack,
-    "AEMBIT_AGENT_CONTROLLER_ID"    = var.aembit_agent_controller_id,
-    "AEMBIT_MANAGED_TLS_HOSTNAME"   = "${var.service_discovery_service_name}.${var.ecs_private_dns_domain}",
-    "AEMBIT_HTTP_PORT_DISABLED"     = tostring(var.aembit_http_port_disabled)
+    "AEMBIT_TENANT_ID"            = var.aembit_tenantid,
+    "AEMBIT_STACK_DOMAIN"         = var.aembit_stack,
+    "AEMBIT_AGENT_CONTROLLER_ID"  = var.aembit_agent_controller_id,
+    "AEMBIT_MANAGED_TLS_HOSTNAME" = local.agent_controller_hostname,
+    "AEMBIT_HTTP_PORT_DISABLED"   = tostring(var.aembit_http_port_disabled)
   }
 
   agent_controller_effective_environment_variables = merge(
