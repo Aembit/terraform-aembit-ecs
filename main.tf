@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "agent-controller" {
     ]
     healthCheck = {
       retries     = 6
-      command     = ["CMD-SHELL", "/app/healthCheck"]
+      command     = ["CMD", "/app/healthCheck"]
       timeout     = 3
       interval    = 7
       startPeriod = 30

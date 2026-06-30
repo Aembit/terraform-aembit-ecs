@@ -54,7 +54,7 @@ variable "aembit_http_port_disabled" {
 variable "agent_controller_image" {
   type        = string
   description = "The container image to use for the Agent Controller installation."
-  default     = "aembit/aembit_agent_controller:1.32.3502"
+  default     = "aembit/aembit_agent_controller:1.32.3541"
 }
 
 variable "agent_proxy_image" {
