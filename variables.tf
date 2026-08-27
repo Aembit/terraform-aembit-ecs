@@ -60,7 +60,7 @@ variable "agent_controller_image" {
 variable "agent_proxy_image" {
   type        = string
   description = "The container image to use for the Agent Proxy installation."
-  default     = "aembit/aembit_agent_proxy:1.32.4999"
+  default     = "aembit/aembit_agent_proxy:1.34.5755"
 }
 
 variable "agent_proxy_resource_set_id" {
