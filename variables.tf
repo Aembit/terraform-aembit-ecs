@@ -127,6 +127,8 @@ variable "service_discovery_registry_arn" {
   description = "The ARN of an existing Service Discovery Service to use. If provided, the module will skip creating its own Service Discovery Service and Private DNS Namespace. When using this option, ensure ecs_private_dns_domain and service_discovery_service_name are set to match your existing configuration for proper internal routing."
 }
 
-
-
-
+variable "wait_for_steady_state" {
+  type        = bool
+  default     = true
+  description = "If true, Terraform will wait for the Agent Controller ECS service to reach a steady state before completing."
+}

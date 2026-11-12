@@ -26,6 +26,18 @@ resource "aws_service_discovery_private_dns_namespace" "agent-controller" {
   vpc         = var.ecs_vpc_id
 }
 
+resource "aws_route53_record" "agent-controller-soa" {
+  count           = var.service_discovery_registry_arn == null ? 1 : 0
+  allow_overwrite = true
+  zone_id         = aws_service_discovery_private_dns_namespace.agent-controller[0].hosted_zone
+  name            = aws_service_discovery_private_dns_namespace.agent-controller[0].name
+  type            = "SOA"
+  ttl             = 900
+  records = [
+    "ns-1536.awsdns-00.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 10"
+  ]
+}
+
 ##########################################################################################
 # AgentController Task & Service
 resource "aws_ecs_task_definition" "agent-controller" {
@@ -62,8 +74,8 @@ resource "aws_ecs_task_definition" "agent-controller" {
       retries     = 6
       command     = ["CMD", "/app/healthCheck"]
       timeout     = 3
-      interval    = 7
-      startPeriod = 30
+      interval    = 5
+      startPeriod = 10
     }
   }])
   task_role_arn            = (var.agent_controller_task_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_task_role_arn)
@@ -108,6 +120,7 @@ resource "aws_ecs_service" "agent-controller" {
   cluster                = var.ecs_cluster
   task_definition        = aws_ecs_task_definition.agent-controller.arn
   enable_execute_command = false
+  wait_for_steady_state  = var.wait_for_steady_state
 
   service_registries {
     registry_arn = var.service_discovery_registry_arn != null ? var.service_discovery_registry_arn : aws_service_discovery_service.agent-controller[0].arn
@@ -118,6 +131,10 @@ resource "aws_ecs_service" "agent-controller" {
     subnets          = var.ecs_subnets
     security_groups  = var.ecs_security_groups
   }
+
+  depends_on = [
+    aws_route53_record.agent-controller-soa
+  ]
 }
 ##########################################################################################
 
