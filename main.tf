@@ -26,6 +26,14 @@ resource "aws_service_discovery_private_dns_namespace" "agent-controller" {
   vpc         = var.ecs_vpc_id
 }
 
+data "aws_route53_zone" "agent-controller" {
+  count   = var.service_discovery_registry_arn == null ? 1 : 0
+  zone_id = aws_service_discovery_private_dns_namespace.agent-controller[0].hosted_zone
+}
+
+# hashicorp/aws (>= 5.53.0) ignores InvalidChangeBatch when destroying an
+# overwritten zone-apex SOA record, allowing the Cloud Map namespace destroy
+# to remove the Private Hosted Zone cleanly.
 resource "aws_route53_record" "agent-controller-soa" {
   count           = var.service_discovery_registry_arn == null ? 1 : 0
   allow_overwrite = true
@@ -34,7 +42,7 @@ resource "aws_route53_record" "agent-controller-soa" {
   type            = "SOA"
   ttl             = 900
   records = [
-    "ns-1536.awsdns-00.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 10"
+    "${trimsuffix(data.aws_route53_zone.agent-controller[0].primary_name_server, ".")}. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 10"
   ]
 }
 

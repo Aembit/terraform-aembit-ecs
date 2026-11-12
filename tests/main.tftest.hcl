@@ -12,6 +12,12 @@ mock_provider "aws" {
     }
   }
 
+  mock_data "aws_route53_zone" {
+    defaults = {
+      primary_name_server = "ns-1536.awsdns-00.co.uk"
+    }
+  }
+
   mock_resource "aws_service_discovery_service" {
     defaults = {
       arn = "arn:aws:servicediscovery:us-east-2:123456789012:service/srv-mock1234"
@@ -57,6 +63,11 @@ run "default_service_discovery_and_readiness" {
   }
 
   assert {
+    condition     = length(data.aws_route53_zone.agent-controller) == 1
+    error_message = "Expected Route 53 Hosted Zone data source to be read when service_discovery_registry_arn is null."
+  }
+
+  assert {
     condition     = length(aws_route53_record.agent-controller-soa) == 1
     error_message = "Expected Route 53 SOA record override to be created when service_discovery_registry_arn is null."
   }
@@ -77,8 +88,8 @@ run "default_service_discovery_and_readiness" {
   }
 
   assert {
-    condition     = contains(aws_route53_record.agent-controller-soa[0].records, "ns-1536.awsdns-00.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 10")
-    error_message = "Expected Route 53 SOA record minimum TTL (negative caching TTL) to be lowered to 10 seconds."
+    condition     = contains(aws_route53_record.agent-controller-soa[0].records, "${trimsuffix(data.aws_route53_zone.agent-controller[0].primary_name_server, ".")}. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 10")
+    error_message = "Expected Route 53 SOA record to preserve the hosted zone MNAME and lower minimum TTL to 10 seconds."
   }
 
   assert {
@@ -117,6 +128,11 @@ run "existing_service_discovery_registry" {
   assert {
     condition     = length(aws_service_discovery_service.agent-controller) == 0
     error_message = "Expected Service Discovery Service not to be created when service_discovery_registry_arn is provided."
+  }
+
+  assert {
+    condition     = length(data.aws_route53_zone.agent-controller) == 0
+    error_message = "Expected Route 53 Hosted Zone data source not to be read when service_discovery_registry_arn is provided."
   }
 
   assert {
