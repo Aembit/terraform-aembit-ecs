@@ -49,16 +49,14 @@ output "agent_proxy_container" {
     ]
   })
   depends_on = [
-    aws_ecs_service.agent-controller,
-    aws_route53_record.agent-controller-soa
+    aws_ecs_service.agent-controller
   ]
 }
 
 output "agent_proxy_default_environment" {
   value = local.agent_proxy_default_environment_variables
   depends_on = [
-    aws_ecs_service.agent-controller,
-    aws_route53_record.agent-controller-soa
+    aws_ecs_service.agent-controller
   ]
 }
 
