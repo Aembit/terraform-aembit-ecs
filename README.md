@@ -68,7 +68,7 @@ The following tables lists the configurable variables of the module and their de
 | ecs_task_prefix | Prefix to include in front of the Agent Controller ECS Task Definitions to ensure uniqueness. | ```aembit_``` |
 | ecs_service_prefix | Prefix to include in front of the Agent Controller Service Name to ensure uniqueness. | ```aembit_``` |
 | ecs_private_dns_domain | The Private DNS TLD that will be configured and used in the specified AWS VPC for AgentProxy to AgentController connectivity. | ```aembit.local``` |
-| wait_for_steady_state | If true, Terraform will wait for the Agent Controller ECS service to reach a steady state before completing. | ```true``` |
+| wait_for_steady_state | If true, Terraform will wait for the Agent Controller ECS service to reach a steady state before completing and exposing Agent Proxy outputs. When using ```hashicorp/aws >= 6.4.0```, the Terraform execution principal requires ```ecs:DescribeServices```, ```ecs:ListServiceDeployments```, and ```ecs:DescribeServiceDeployments```. | ```true``` |
 
 
 ## AWS Resources

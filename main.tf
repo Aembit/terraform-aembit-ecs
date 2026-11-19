@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "agent-controller" {
       command     = ["CMD", "/app/healthCheck"]
       timeout     = 3
       interval    = 5
-      startPeriod = 10
+      startPeriod = 30
     }
   }])
   task_role_arn            = (var.agent_controller_task_role_arn == null ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole" : var.agent_controller_task_role_arn)
