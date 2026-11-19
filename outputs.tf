@@ -48,7 +48,6 @@ output "agent_proxy_container" {
       for varname, varvalue in local.agent_proxy_effective_environment_variables : { "name" : varname, "value" : varvalue }
     ]
   })
-  # Hold proxy container output until Agent Controller service reaches steady state and registers in Cloud Map
   depends_on = [
     aws_ecs_service.agent-controller
   ]
@@ -56,7 +55,6 @@ output "agent_proxy_container" {
 
 output "agent_proxy_default_environment" {
   value = local.agent_proxy_default_environment_variables
-  # Hold proxy environment output until Agent Controller service reaches steady state and registers in Cloud Map
   depends_on = [
     aws_ecs_service.agent-controller
   ]
