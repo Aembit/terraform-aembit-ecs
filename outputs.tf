@@ -48,10 +48,16 @@ output "agent_proxy_container" {
       for varname, varvalue in local.agent_proxy_effective_environment_variables : { "name" : varname, "value" : varvalue }
     ]
   })
+  depends_on = [
+    aws_ecs_service.agent-controller
+  ]
 }
 
 output "agent_proxy_default_environment" {
   value = local.agent_proxy_default_environment_variables
+  depends_on = [
+    aws_ecs_service.agent-controller
+  ]
 }
 
 output "aembit_http_proxy" {

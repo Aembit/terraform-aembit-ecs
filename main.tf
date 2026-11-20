@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "agent-controller" {
       retries     = 6
       command     = ["CMD", "/app/healthCheck"]
       timeout     = 3
-      interval    = 7
+      interval    = 5
       startPeriod = 30
     }
   }])
@@ -108,6 +108,7 @@ resource "aws_ecs_service" "agent-controller" {
   cluster                = var.ecs_cluster
   task_definition        = aws_ecs_task_definition.agent-controller.arn
   enable_execute_command = false
+  wait_for_steady_state  = var.wait_for_steady_state
 
   service_registries {
     registry_arn = var.service_discovery_registry_arn != null ? var.service_discovery_registry_arn : aws_service_discovery_service.agent-controller[0].arn
